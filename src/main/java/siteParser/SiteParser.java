@@ -1,4 +1,7 @@
+package siteParser;
+
 import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -15,6 +18,7 @@ public class SiteParser extends RecursiveAction {
     public final static String PASSWORD = "16Sokol90@";
     public final static String Url = "jdbc:mysql://localhost:3306/search_engine";
     public final static String PATH = "http://www.playback.ru/";
+    private final static String regex = "[^А-Яа-яA-Za-z<>]+";
 
     public static void main(String[] args) throws SQLException, IOException, InterruptedException {
         ForkJoinPool forkJoinPool = new ForkJoinPool();
@@ -23,24 +27,25 @@ public class SiteParser extends RecursiveAction {
 
     private static void pageParser() throws IOException, SQLException, InterruptedException {
 
-        org.jsoup.Connection.Response document = Jsoup.connect(SiteParser.PATH)
+        org.jsoup.Connection.Response d = Jsoup.connect(PATH).execute();
+        Document document = Jsoup.connect(SiteParser.PATH)
                 .userAgent("Mozilla/5.0 (Windows; U; WindowsNT 5.1; en-US; rv1.8.1.6) Gecko/20070725 Firefox/2.0.0.6")
                 .referrer("http://www.google.com")
                 .maxBodySize(0)
-                .execute();
+                .get();
 
 
-        Elements elements = document.parse().getElementsByAttribute("href");
-
+        Elements elements = document.getElementsByAttribute("href");
         for (Element element : elements) {
             String link = element.absUrl("href");
 
             if (link.startsWith(PATH) && link.endsWith(".html")) {
 
                 String sql = "INSERT INTO page(path, code, content) " +
-                        "VALUES('" + link.substring(22) + "', '" + document.statusCode() + "', '" + document + "')";
+                        "VALUES('" + link.substring(22) + "', '" + d.statusCode() + "', '" + document.toString().replaceAll(regex, "") + "')";
 
                 connection.createStatement().executeUpdate(sql);
+         //  connection.close();
             }
         }
     }
@@ -74,4 +79,5 @@ public class SiteParser extends RecursiveAction {
         }
         invokeAll();
     }
+
 }
