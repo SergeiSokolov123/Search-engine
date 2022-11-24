@@ -1,0 +1,7 @@
+spring :
+  datasource :
+    url: jdbc:mysql://localhost:3306/search_engine
+    username: root
+    password: 16Sokol90@
+
+spring.jpa.hibernate.ddl-auto: none
