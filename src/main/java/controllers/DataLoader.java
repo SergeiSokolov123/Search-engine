@@ -1,12 +1,12 @@
 package controllers;
-
-import lemmatizer.LemmaFinder;
+import Lemma.LemmaFinder;
+import jakarta.annotation.PostConstruct;
 import main.repositories.LemmaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 
-import javax.annotation.PostConstruct;
+
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -25,7 +25,7 @@ public class DataLoader {
 
     @PostConstruct
     public void saveLemmas() throws IOException {
-        lemmaFinder.getBodyLemmasFromEachPage(lemmasFrequency);
+      lemmaFinder.getBodyLemmasFromEachPage(lemmasFrequency);
     }
 
     public static void get() {
